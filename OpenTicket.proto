@@ -1,0 +1,113 @@
+/**
+ * OpenTicket V2 
+ * 
+ * Simplified encoding standard for ticket data
+ * in public transportation.
+ *
+ * 2020 (c) Sebastian Knopf
+ *
+ */
+ 
+// use proto3 syntax for code generation
+syntax = "proto3";
+
+// several options for code output
+package OpenTicket;
+
+option java_package = "de.openticket";
+option java_outer_classname = "OpenTicket";
+option java_multiple_files = true;
+
+/**
+ * The Envelope message defines basic headers for each ticket and contains
+ * at least one signed legitimation as arbitrary byte data.
+ */
+message Envelope {
+	uint32 			envelopeVersion = 1;	    // the envelope version for parsing the ticket data
+	string 			signingKeyName = 2;	        // the key name which is used for signing ALL legitimations
+	repeated bytes 	encryptedLegitimations = 3; // as many RSA encrypted legitimations as arbitrary binary data
+}
+
+/**
+ * The Legitimation message contains all required information about a legitimation
+ * to use for a trip.
+ */
+message Legitimation {
+	uint32	legitimationId = 1;		// the system unique legitimation id
+	uint32 	dateTimeOfOrder = 2;	// the timestamp when the legitimation has been ordered
+	uint32	validFrom = 3;			// earliest validity timestamp of the legitimation
+	uint32 	validUntil = 4;			// least validity timestamp of the legitimation
+	uint32  optionFlags = 5;		// user defined option flags with 32 bits
+
+	ProductRecord product = 6;		// product record with fare product information
+	PassengerRecord passenger = 7;	// passenger record with information about how many people traveling on this legitmation
+
+	oneof AreaInfo {				// at most one area info for spatial validity
+		Relation	relation = 8;
+		AreaList	areaList = 9;
+		StopList	stopList = 10;
+	}
+
+	uint32	price = 11;				// full price of the ticket including the tax
+	uint32 	tax = 12;				// the tax amount applied on the full price
+}
+
+/**
+ * The ProductRecord message defines information about a fare product. Note that
+ * this should only have an informational character to be interpreted by the user.
+ */
+message ProductRecord {
+	string	name = 1;			// human-readable product name (should be shortened in order to save memory!)
+	string 	infoText = 2;		// human-readable info text (should be shortened in order to save memory!)
+	uint32	serviceClass = 3;	// service class the ticket is valid for
+}
+
+/**
+ * The PassengerRecord messages defines information about the passenger who is permitted
+ * to use the legitimation and other information about the passenger carriage.
+ */
+message PassengerRecord {
+	bool 	personRelated = 1;		// whether the legitimation is restricted to be used by a certain person
+	string 	name = 2;				// name of the passenger (should be shortened in order to save memory and match privacy!)
+	uint32	age = 3;				// age of the passenger
+
+	enum Gender {					// gender enumeration of all possible genders
+		DIVERS = 0;
+		MALE = 1;
+		FEMALE = 2;
+	}
+
+	Gender 	gender = 4;				// gender of the passenger which is permitted to use the legitimation
+
+	uint32 	numAdults = 5;			// number of adult passengers
+	uint32 	numChildren = 6;		// number of children
+}
+
+/**
+ * The Relation message defines a particular transit relation from one stop ID
+ * to another stop ID and all fare areas the legitimation is valid in.
+ */
+message Relation {
+	uint32 			startStopId = 1;		// start stop ID
+	uint32 			destinationStopId = 2;	// destination stop ID
+	repeated uint32 containingAreaIds = 3;	// reference to one or more fare areas in which the legitimation is valid
+}
+
+/**
+ * The AreaList message defines a list of fare areas for spatial validity.
+ * A start stop ID can be determined to restrict the validity to a certain
+ * traveling direction.
+ */
+message AreaList {
+	uint32			startStopId = 1;		// start stop ID (can be left empty if not applicable)
+	repeated uint32	containingAreaIds = 2;	// reference to one or more fare areas in which the legitimation is valid
+}
+
+/**
+ * The StopList message defines a start stop ID and all destination stop IDs
+ * which can be reached by using this stop list.
+ */
+message StopList {
+	uint32			startStopId = 1;		// start stop ID
+	repeated uint32 containingStopIds = 2;	// all stop IDs which can be reached by the legitimation
+}

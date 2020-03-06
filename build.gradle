@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+group 'de.openticket'
+version '2.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    compile group: 'com.google.protobuf', name: 'protobuf-java', version:'3.11.0'
+    compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.64'
+}
