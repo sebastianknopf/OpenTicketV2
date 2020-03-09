@@ -6,11 +6,15 @@ To meet these requirements, each legitimation message should be encrypted by usi
 According to this, reading a legitimation message requires the corresponding public key to decrypt the legitimation messages again.
 
 This library provides a simple way to generate the required RSA key pair. You can do this by using the jar file as application
-or use the `de.openticket.security` package in your own application.
+or use the `org.openticket.security` package in your own application. It will create all key files in PEM format, so you may deal
+with this overhead, but there're no leaks for encoding errors. 
 
 To create the keys with the jar file, type in your console:
 
 `java -jar openticket-2.0.0.jar keygen -private 00001_Private.pem -public 00001_Public.crt -s 1024`
+
+It is recommended that you use the *.pem file extension for your key files. If you create a self-signing
+certificate (default variant; always when using command line) over your public key, you should use the *.crt extension.
 
 In your application code, the following snippet will do this:
 
@@ -30,7 +34,7 @@ skg.generateKeyPair("00001_Private.pem", "00001_Public.pem", false);
 skg.generateKeyPair("00001_Private.pem", "00001_Public.pem", SecurityKeyGenerator.KEY_SIZE_2048, false);
 ```
 
-*Note: The size of your key limits the maximum size of your Legitimation message by using the `de.openticket.security` package! The Legitimation bytes
+*Note: The size of your key limits the maximum size of your Legitimation message by using the `org.openticket.security` package! The Legitimation bytes
 must be max. 128 bytes for a 1024 bits key, max. 256 bytes for a 2048 bits key and so on...*
 
 It is recommended that you store especially the private key file on a storage location, where no unauthorized
@@ -39,7 +43,7 @@ messages! If your legitimation messages can also contain personal information li
 age, you also should be aware of the user group, which will have access to the public key certificate, since this would enable
 a user to view these personal information.
 
-The `de.openticket.security`package is only a helper, you can encrypt / decrypt your legitimation messages with any method 
+The `org.openticket.security`package is only a helper, you can encrypt / decrypt your legitimation messages with any method 
 you want.
 
 [< General Notes](GENERAL_NOTES.md) | [Data Structure >](DATA_STRUCTURE.md)

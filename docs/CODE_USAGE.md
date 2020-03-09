@@ -47,7 +47,7 @@ Use this method type to avoid null pointer accesses on fields which are not init
 ## Encryption and Decryption
 
 As mentioned in the [security section](SECURITY.md), your legitimation data should be encrypted before pushing it into the envelope message
-to meet all security requirements. If you want to use the cryptography tools included in the `de.openticket.security` package, you
+to meet all security requirements. If you want to use the cryptography tools included in the `org.openticket.security` package, you
 can use the following snippet for encryption:
 
 ```
