@@ -14,7 +14,7 @@ syntax = "proto3";
 // several options for code output
 package OpenTicket;
 
-option java_package = "de.openticket";
+option java_package = "org.openticket";
 option java_outer_classname = "OpenTicket";
 option java_multiple_files = true;
 
