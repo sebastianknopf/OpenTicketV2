@@ -11,7 +11,9 @@ with this overhead, but there're no leaks for encoding errors.
 
 To create the keys with the jar file, type in your console:
 
-`java -jar openticket-2.0.0.jar keygen -private 00001_Private.pem -public 00001_Public.crt -s 1024`
+`java -jar openticket-core-runnable-1.0.0.jar keygen -private 00001_Private.pem -public 00001_Public.crt -s 1024`
+
+*Note: Make sure you downloaded the file with the 'runnable' appendix! Other *.jar files will not be executable.*
 
 It is recommended that you use the *.pem file extension for your key files. If you create a self-signing
 certificate (default variant; always when using command line) over your public key, you should use the *.crt extension.
