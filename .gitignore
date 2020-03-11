@@ -104,3 +104,4 @@ gradle-app.setting
 *.pem
 *.crt
 *.pbf
+/local.properties

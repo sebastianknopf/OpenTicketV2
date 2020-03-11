@@ -1,8 +1,10 @@
 package org.openticket.app;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.openticket.security.SecurityKeyGenerator;
 import org.apache.commons.cli.*;
 
+import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +65,8 @@ public class Application {
      */
     private static void keyGen(CommandLine cmd) {
         try {
+            Security.addProvider(new BouncyCastleProvider());
+
             String privateFilename = cmd.getOptionValue("private");
             String publicFilename = cmd.getOptionValue("public");
             int keySize = Integer.parseInt(cmd.getOptionValue("s", "1024"));

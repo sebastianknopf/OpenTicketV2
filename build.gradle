@@ -1,19 +1,67 @@
-plugins {
-    id 'java'
-    id 'idea'
+buildscript {
+    repositories {
+        jcenter()
+    }
 }
 
-group 'de.openticket'
-version '2.0'
+plugins {
+    id 'idea'
+    id 'java'
+    id 'com.jfrog.bintray' version '1.7'
+}
 
-sourceCompatibility = 1.8
+allprojects {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+}
 
-repositories {
-    mavenCentral()
+group = deployGroup
+version = deployVersion
+
+Properties localProperties = new Properties()
+localProperties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+def getLocalProperty = { String propertyName ->
+    localProperties.get(propertyName)
 }
 
 dependencies {
-    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-    compile group: 'com.google.protobuf', name: 'protobuf-java', version:'3.11.0'
-    compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.64'
+    implementation 'commons-cli:commons-cli:1.4'
+    implementation 'com.google.protobuf:protobuf-java:3.11.0'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.64'
+}
+
+bintray {
+    user = getLocalProperty('bintrayUser')
+    key = getLocalProperty('bintrayApiKey')
+    configurations = ['archives']
+    publish = true
+
+    pkg {
+        repo = 'OpenTicketV2'
+        name = 'org.openticket'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/sebastianknopf/OpenTicketV2.git'
+        version {
+            name = deployVersion
+            vcsTag = deployVersion
+            released = new Date()
+        }
+    }
+}
+
+task runnableJar(type: Jar, dependsOn: classes, group: 'build') {
+    manifest {
+        attributes(
+                'Main-Class': 'org.openticket.app.Application'
+        )
+    }
+
+    appendix 'runnable'
+
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+    with jar
 }
